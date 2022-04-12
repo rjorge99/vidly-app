@@ -1,21 +1,37 @@
 import { useEffect, useState } from 'react';
 import { getMovies } from '../services/fakeMovieService';
+import { paginate } from '../utils/paginate';
 import { Like } from './commons/like';
+import { Pagination } from './pagination';
 
 export const Movies = () => {
-    const [movies, setMovies] = useState([]);
+    const [state, setState] = useState({
+        movies: [],
+        pageSize: 4,
+        currentPage: 1
+    });
+
+    const { length: count } = state.movies;
+    const { pageSize, currentPage, movies: allMovies } = state;
 
     useEffect(() => {
-        setMovies(getMovies());
+        setState({
+            ...state,
+            movies: getMovies()
+        });
     }, []);
 
     const handleDelete = (movie) => {
-        setMovies(movies.filter((m) => m._id !== movie._id));
+        setState({
+            ...state,
+            movies: state.movies.filter((m) => m._id !== movie._id)
+        });
     };
 
     const handleLike = (movie) => {
-        setMovies(
-            movies.map((m) =>
+        setState({
+            ...state,
+            movies: state.movies.map((m) =>
                 m._id !== movie._id
                     ? m
                     : {
@@ -23,14 +39,23 @@ export const Movies = () => {
                           liked: !m.liked
                       }
             )
-        );
+        });
     };
 
-    if (movies.length === 0) return <p>There are no movies in the database</p>;
+    const onPageChange = (page) => {
+        setState({
+            ...state,
+            currentPage: page
+        });
+    };
+
+    if (allMovies.length === 0) return <p>There are no movies in the database</p>;
+
+    const movies = paginate(allMovies, currentPage, pageSize);
 
     return (
         <>
-            <p>Showing {movies.length} movies in the database</p>
+            <p>Showing {state.movies.length} movies in the database</p>
             <table className='table'>
                 <thead>
                     <tr>
@@ -63,6 +88,12 @@ export const Movies = () => {
                     ))}
                 </tbody>
             </table>
+            <Pagination
+                currentPage={currentPage}
+                totalItems={count}
+                pageSize={pageSize}
+                onPageChange={onPageChange}
+            />
         </>
     );
 };
