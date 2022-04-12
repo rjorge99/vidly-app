@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { deleteMovie, getMovies } from '../services/fakeMovieService';
+import { getMovies } from '../services/fakeMovieService';
+import { Like } from './commons/like';
 
 export const Movies = () => {
     const [movies, setMovies] = useState([]);
@@ -10,6 +11,19 @@ export const Movies = () => {
 
     const handleDelete = (movie) => {
         setMovies(movies.filter((m) => m._id !== movie._id));
+    };
+
+    const handleLike = (movie) => {
+        setMovies(
+            movies.map((m) =>
+                m._id !== movie._id
+                    ? m
+                    : {
+                          ...m,
+                          liked: !m.liked
+                      }
+            )
+        );
     };
 
     if (movies.length === 0) return <p>There are no movies in the database</p>;
@@ -25,19 +39,23 @@ export const Movies = () => {
                         <th scope='col'>Stock</th>
                         <th scope='col'>Rate</th>
                         <th scope='col'></th>
+                        <th scope='col'></th>
                     </tr>
                 </thead>
                 <tbody>
-                    {movies.map((m) => (
-                        <tr key={m._id}>
-                            <td>{m.title}</td>
-                            <td>{m.genre.name}</td>
-                            <td>{m.numberInStock}</td>
-                            <td>{m.dailyRentalRate}</td>
+                    {movies.map((movie) => (
+                        <tr key={movie._id}>
+                            <td>{movie.title}</td>
+                            <td>{movie.genre.name}</td>
+                            <td>{movie.numberInStock}</td>
+                            <td>
+                                <Like liked={movie.liked} onClick={() => handleLike(movie)} />
+                            </td>
+                            <td>{movie.dailyRentalRate}</td>
                             <td>
                                 <button
                                     className='btn btn-danger btn-sm'
-                                    onClick={() => handleDelete(m)}>
+                                    onClick={() => handleDelete(movie)}>
                                     Delete
                                 </button>
                             </td>
