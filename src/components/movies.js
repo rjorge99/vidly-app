@@ -66,28 +66,32 @@ export const Movies = () => {
         });
     };
 
-    const handleSort = (path) => {
-        let currentSortColumn = { ...sortColumn };
-        if (currentSortColumn.path === path) {
-            currentSortColumn.order = currentSortColumn.order === 'asc' ? 'desc' : 'asc';
-        } else currentSortColumn = { path, order: 'asc' };
-        console.log(sortColumn);
+    const handleSort = (sortColumn) => {
         setState({
             ...state,
-            sortColumn: currentSortColumn
+            sortColumn
         });
+    };
+
+    const getPageData = () => {
+        const filtered =
+            selectedGenre && selectedGenre._id
+                ? allMovies.filter((m) => m.genre._id === selectedGenre._id)
+                : allMovies;
+
+        const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
+
+        const movies = paginate(sorted, currentPage, pageSize);
+
+        return {
+            totalCount: filtered.length,
+            data: movies
+        };
     };
 
     if (allMovies.length === 0) return <p>There are no movies in the database</p>;
 
-    const filtered =
-        selectedGenre && selectedGenre._id
-            ? allMovies.filter((m) => m.genre._id === selectedGenre._id)
-            : allMovies;
-
-    const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
-
-    const movies = paginate(sorted, currentPage, pageSize);
+    const { totalCount, data: movies } = getPageData();
 
     return (
         <>
@@ -100,16 +104,17 @@ export const Movies = () => {
                     />
                 </div>
                 <div className='col'>
-                    <p>Showing {filtered.length} movies in the database</p>
+                    <p>Showing {totalCount} movies in the database</p>
                     <MoviesTable
                         onSort={handleSort}
                         movies={movies}
                         onLike={handleLike}
                         onDelete={handleDelete}
+                        sortColumn={sortColumn}
                     />
                     <Pagination
                         currentPage={currentPage}
-                        totalItems={filtered.length}
+                        totalItems={totalCount}
                         pageSize={pageSize}
                         onPageChange={onPageChange}
                     />
