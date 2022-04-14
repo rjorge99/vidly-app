@@ -1,5 +1,3 @@
-import { isSafeInteger } from 'lodash';
-
 export const TableHeader = ({ columns, onSort, sortColumn }) => {
     const raiseSort = (path) => {
         let currentSortColumn = { ...sortColumn };
