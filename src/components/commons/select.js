@@ -10,6 +10,7 @@ export const Select = ({ name, label, options, ...rest }) => {
                     </option>
                 ))}
             </select>
+            {error && <div className='alert alert-danger'>{error}</div>}
         </div>
     );
 };
