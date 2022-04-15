@@ -87,7 +87,8 @@ export const Movies = () => {
         setState({
             ...state,
             searchQuery: query,
-            selectedGenre: null
+            selectedGenre: null,
+            currentPage: 1
         });
     };
 
