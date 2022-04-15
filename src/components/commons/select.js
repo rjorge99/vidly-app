@@ -1,4 +1,4 @@
-export const Select = ({ name, label, options, ...rest }) => {
+export const Select = ({ name, label, options, error, ...rest }) => {
     return (
         <div className='form-group'>
             <label htmlFor={name}>{label}</label>

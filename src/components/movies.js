@@ -7,6 +7,7 @@ import { Pagination } from './pagination';
 import { MoviesTable } from './moviesTable';
 import _ from 'lodash';
 import { Link, useNavigate } from 'react-router-dom';
+import { SearchBox } from './commons/searchBox';
 
 export const Movies = () => {
     const navigate = useNavigate();
@@ -130,7 +131,7 @@ export const Movies = () => {
                         New movie
                     </Link>
                     <p>Showing {totalCount} movies in the database</p>
-                    <input type='text' className='form-control my-3' onChange={searchChanged} />
+                    <SearchBox onChange={searchChanged} className='form-control my-3' />
                     <MoviesTable
                         onSort={handleSort}
                         movies={movies}
