@@ -6,11 +6,10 @@ import { ListGroup } from './commons/listGroup';
 import { Pagination } from './pagination';
 import { MoviesTable } from './moviesTable';
 import _ from 'lodash';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { SearchBox } from './commons/searchBox';
 
 export const Movies = () => {
-    const navigate = useNavigate();
     const [state, setState] = useState({
         movies: [],
         pageSize: 4,
