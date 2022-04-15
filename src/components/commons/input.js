@@ -1,16 +1,8 @@
-export const Input = ({ name, label, value, error, onChange }) => {
+export const Input = ({ name, label, error, ...rest }) => {
     return (
         <div className='form-group'>
             <label htmlFor={name}>{label}</label>
-            <input
-                name={name}
-                value={value}
-                onChange={onChange}
-                id={name}
-                type='text'
-                className='form-control'
-                autoFocus
-            />
+            <input name={name} id={name} className='form-control' {...rest} />
             {error && <div className='alert alert-danger'>{error}</div>}
         </div>
     );

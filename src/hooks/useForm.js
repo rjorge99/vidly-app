@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import { Input } from '../components/commons/input';
+import { useState } from 'react';
 import Joi from 'joi-browser';
+import { Select } from '../components/commons/select';
 
-export const useForm = (initialState = { data: {}, errors: {}, schema: {} }) => {
+export const useForm = (initialState) => {
     const [formState, setFormState] = useState(initialState);
-    const { schema, errors, data } = formState;
+    const { data, errors, schema } = formState;
 
     const validate = () => {
         const options = { abortEarly: false };
@@ -12,7 +14,6 @@ export const useForm = (initialState = { data: {}, errors: {}, schema: {} }) => 
 
         const errors = {};
         for (const item of error.details) errors[item.path[0]] = item.message;
-
         return errors;
     };
 
@@ -43,18 +44,65 @@ export const useForm = (initialState = { data: {}, errors: {}, schema: {} }) => 
     const handleSubmit = (e) => {
         e.preventDefault();
         const errors = validate();
+        if (errors) return;
+
         setFormState({
             ...formState,
             errors: errors || {}
         });
     };
 
+    const renderInput = (label, name, type = 'text') => {
+        return (
+            <Input
+                type={type}
+                name={name}
+                error={errors[name]}
+                label={label}
+                onChange={handleChange}
+                value={data[name]}
+            />
+        );
+    };
+
+    const setData = (data) => {
+        setFormState({
+            ...formState,
+            data
+        });
+    };
+
+    const renderButton = (label) => {
+        return (
+            <button disabled={validate()} type='submit' className='btn btn-primary'>
+                {label}
+            </button>
+        );
+    };
+
+    const renderSelect = (label, name, options) => {
+        return (
+            <Select
+                label={label}
+                name={name}
+                options={options}
+                error={errors[name]}
+                onChange={handleChange}
+                value={data[name]}
+            />
+        );
+    };
+
     return {
         formState,
-        validate,
-        validateProperty,
-        handleChange,
         handleSubmit,
+        renderButton,
+        renderInput,
+        renderSelect,
+        setData,
         errors
+        // handleChange,
+        // validate,
+        // validateProperty,
     };
 };

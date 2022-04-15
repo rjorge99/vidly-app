@@ -46,6 +46,13 @@ export const NavBar = () => {
                             Login
                         </NavLink>
                     </li>
+                    <li className='nav-item'>
+                        <NavLink
+                            className={({ isActive }) => `nav-link ${isActive && 'active'}`}
+                            to='/register'>
+                            Register
+                        </NavLink>
+                    </li>
                 </ul>
             </div>
         </nav>
