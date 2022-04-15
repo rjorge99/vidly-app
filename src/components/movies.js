@@ -83,10 +83,10 @@ export const Movies = () => {
         });
     };
 
-    const searchChanged = (e) => {
+    const searchChanged = (query) => {
         setState({
             ...state,
-            searchQuery: e.target.value,
+            searchQuery: query,
             selectedGenre: null
         });
     };
