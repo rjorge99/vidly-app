@@ -2,8 +2,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useForm } from '../hooks/useForm';
 import Joi from 'joi-browser';
 import { useEffect, useMemo } from 'react';
-import { getGenres } from '../services/fakeGenreService';
 import { getMovie, saveMovie } from '../services/fakeMovieService';
+import { getGenres } from '../services/fakeGenreService';
 
 export const MovieForm = () => {
     const { id } = useParams();
@@ -30,6 +30,7 @@ export const MovieForm = () => {
         if (id === 'new') return;
 
         const movie = getMovie(id);
+        console.log(movie);
         if (!movie) navigate('/not-found', { replace: true });
         setData(mapToViewModel(movie));
     }, []);

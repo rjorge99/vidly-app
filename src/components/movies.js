@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { deleteMovie, getMovies, updateMovie } from '../services/fakeMovieService';
-import { getGenres } from '../services/fakeGenreService';
+import { deleteMovie, getMovies, updateMovie } from '../services/moviesService';
 import { paginate } from '../utils/paginate';
 import { ListGroup } from './commons/listGroup';
 import { Pagination } from './pagination';
@@ -8,6 +7,8 @@ import { MoviesTable } from './moviesTable';
 import _ from 'lodash';
 import { Link } from 'react-router-dom';
 import { SearchBox } from './commons/searchBox';
+import { getGenres } from '../services/genresService';
+import { toast } from 'react-toastify';
 
 export const Movies = () => {
     const [state, setState] = useState({
@@ -31,23 +32,36 @@ export const Movies = () => {
     } = state;
 
     useEffect(() => {
-        const genres = [{ name: 'All Genres', _id: '' }, ...getGenres()];
-        const movies = getMovies();
+        async function loadData() {
+            let { data } = await getGenres();
+            const genres = [{ name: 'All Genres', _id: '' }, ...data];
+            const { data: movies } = await getMovies();
 
-        setState({
-            ...state,
-            movies: movies,
-            genres
-        });
+            setState({
+                ...state,
+                movies: movies,
+                genres
+            });
+        }
+
+        loadData();
     }, []);
 
-    const handleDelete = (movie) => {
+    const handleDelete = async (movie) => {
+        const originalMovies = state.movies;
         setState({
             ...state,
             movies: state.movies.filter((m) => m._id !== movie._id)
         });
 
-        deleteMovie(movie._id);
+        try {
+            const result = await deleteMovie(movie._id);
+            console.log(result);
+        } catch (error) {
+            if (error.response && error.response.status === 404)
+                toast.error('This movie has been deleted');
+            setState({ ...state, movies: originalMovies });
+        }
     };
 
     const handleLike = (movie) => {
@@ -56,7 +70,7 @@ export const Movies = () => {
             ...state,
             movies: state.movies.map((m) => (m._id !== movie._id ? m : movie))
         });
-        updateMovie(movie);
+        // updateMovie(movie);
     };
 
     const onPageChange = (page) => {

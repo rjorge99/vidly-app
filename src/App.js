@@ -8,24 +8,29 @@ import { NavBar } from './components/commons/NavBar';
 import { NotFound } from './components/commons/not-found';
 import { Rentals } from './components/rentals';
 import { RegisterForm } from './components/registerForm';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
     return (
-        <BrowserRouter>
-            <NavBar />
-            <main className='container'>
-                <Routes>
-                    <Route path='/customers' element={<Customers />} />
-                    <Route path='/movies' element={<Movies />} />
-                    <Route path='/movies/:id' element={<MovieForm />} />
-                    <Route path='/rentals' element={<Rentals />} />
-                    <Route path='/register' element={<RegisterForm />} />
-                    <Route path='/login' element={<LoginForm />} />
-                    <Route path='/' element={<Movies />} />
-                    <Route path='*' element={<NotFound />} />
-                </Routes>
-            </main>
-        </BrowserRouter>
+        <>
+            <ToastContainer />
+            <BrowserRouter>
+                <NavBar />
+                <main className='container'>
+                    <Routes>
+                        <Route path='/customers' element={<Customers />} />
+                        <Route path='/movies' element={<Movies />} />
+                        <Route path='/movies/:id' element={<MovieForm />} />
+                        <Route path='/rentals' element={<Rentals />} />
+                        <Route path='/register' element={<RegisterForm />} />
+                        <Route path='/login' element={<LoginForm />} />
+                        <Route path='/' element={<Movies />} />
+                        <Route path='*' element={<NotFound />} />
+                    </Routes>
+                </main>
+            </BrowserRouter>
+        </>
     );
 }
 

@@ -4,6 +4,9 @@ import App from './App';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.css';
+import logger from './services/logService';
+
+logger.init();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<App />);
