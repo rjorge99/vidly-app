@@ -1,14 +1,40 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm } from '../hooks/useForm';
 import Joi from 'joi-browser';
-import { useEffect, useMemo } from 'react';
-import { getMovie, saveMovie } from '../services/fakeMovieService';
-import { getGenres } from '../services/fakeGenreService';
+import { useCallback, useEffect, useState } from 'react';
+import { getMovie, saveMovie } from '../services/moviesService';
+import { getGenres } from '../services/genresService';
 
 export const MovieForm = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const genres = useMemo(() => getGenres(), []);
+    const [genres, setGenres] = useState([]);
+
+    const getGenresData = useCallback(async () => {
+        const { data: genres } = await getGenres();
+        setGenres(genres);
+    }, []);
+
+    const getMovieData = useCallback(async () => {
+        if (id === 'new') return;
+
+        try {
+            const { data: movie } = await getMovie(id);
+            setData(mapToViewModel(movie));
+        } catch (error) {
+            if (error.response && error.response.status === 404)
+                return navigate('/not-found', { replace: true });
+        }
+    }, []);
+
+    useEffect(() => {
+        getGenresData();
+    }, [getGenresData]);
+
+    useEffect(() => {
+        getMovieData();
+    }, [getMovieData]);
+
     const { renderInput, handleSubmit, formState, renderButton, renderSelect, setData } = useForm({
         data: {
             title: '',
@@ -26,15 +52,6 @@ export const MovieForm = () => {
         }
     });
 
-    useEffect(() => {
-        if (id === 'new') return;
-
-        const movie = getMovie(id);
-        console.log(movie);
-        if (!movie) navigate('/not-found', { replace: true });
-        setData(mapToViewModel(movie));
-    }, []);
-
     const mapToViewModel = (movie) => {
         return {
             _id: movie._id,
@@ -47,11 +64,10 @@ export const MovieForm = () => {
 
     const { errors, data: movie } = formState;
 
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         handleSubmit(e);
         if (Object.keys(errors).length) return;
-
-        saveMovie(movie);
+        await saveMovie(movie);
         navigate('/movies', { replace: true });
     };
 
