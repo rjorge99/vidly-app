@@ -9,32 +9,6 @@ export const MovieForm = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [genres, setGenres] = useState([]);
-
-    const getGenresData = useCallback(async () => {
-        const { data: genres } = await getGenres();
-        setGenres(genres);
-    }, []);
-
-    const getMovieData = useCallback(async () => {
-        if (id === 'new') return;
-
-        try {
-            const { data: movie } = await getMovie(id);
-            setData(mapToViewModel(movie));
-        } catch (error) {
-            if (error.response && error.response.status === 404)
-                return navigate('/not-found', { replace: true });
-        }
-    }, []);
-
-    useEffect(() => {
-        getGenresData();
-    }, [getGenresData]);
-
-    useEffect(() => {
-        getMovieData();
-    }, [getMovieData]);
-
     const { renderInput, handleSubmit, formState, renderButton, renderSelect, setData } = useForm({
         data: {
             title: '',
@@ -51,6 +25,31 @@ export const MovieForm = () => {
             dailyRentalRate: Joi.number().required().min(1).max(10).label('Daily Rental Rate')
         }
     });
+
+    const getGenresData = useCallback(async () => {
+        const { data: genres } = await getGenres();
+        setGenres(genres);
+    }, []);
+
+    const getMovieData = useCallback(async () => {
+        if (id === 'new') return;
+
+        try {
+            const { data: movie } = await getMovie(id);
+            setData(mapToViewModel(movie));
+        } catch (error) {
+            if (error.response && error.response.status === 404)
+                return navigate('/not-found', { replace: true });
+        }
+    }, [id, navigate, setData]);
+
+    useEffect(() => {
+        getGenresData();
+    }, [getGenresData]);
+
+    useEffect(() => {
+        getMovieData();
+    }, [getMovieData]);
 
     const mapToViewModel = (movie) => {
         return {

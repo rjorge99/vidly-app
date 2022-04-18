@@ -1,5 +1,7 @@
 import { useForm } from '../hooks/useForm';
 import Joi from 'joi-browser';
+import { register } from '../services/userService';
+import { loginWithJwt } from '../services/authService';
 
 export const RegisterForm = () => {
     const schema = {
@@ -9,7 +11,7 @@ export const RegisterForm = () => {
     };
 
     // TODO: no deberia mandar errores yo
-    const { renderInput, renderButton, handleSubmit, formState } = useForm({
+    const { renderInput, renderButton, handleSubmit, setErrors, formState } = useForm({
         data: {
             username: '',
             password: '',
@@ -22,10 +24,20 @@ export const RegisterForm = () => {
     const { errors, data } = formState;
 
     // TODO: Evitar esta llamada, buscar hacerlo como Formik
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         handleSubmit(e);
         if (Object.keys(errors).length) return;
-        console.log(data);
+        try {
+            const response = await register(data);
+            loginWithJwt(response.headers['x-auth-token']);
+            window.location = '/'; // TODO: cambiar despues
+        } catch (err) {
+            if (err.response && err.response.status === 400) {
+                const errors = { ...formState.errors };
+                errors.username = err.response.data;
+                setErrors(errors);
+            }
+        }
     };
 
     return (

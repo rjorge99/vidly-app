@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { deleteMovie, getMovies, updateMovie } from '../services/moviesService';
+import { deleteMovie, getMovies } from '../services/moviesService';
 import { paginate } from '../utils/paginate';
 import { ListGroup } from './commons/listGroup';
 import { Pagination } from './pagination';
@@ -10,7 +10,7 @@ import { SearchBox } from './commons/searchBox';
 import { getGenres } from '../services/genresService';
 import { toast } from 'react-toastify';
 
-export const Movies = () => {
+export const Movies = ({ user }) => {
     const [state, setState] = useState({
         movies: [],
         pageSize: 4,
@@ -37,11 +37,11 @@ export const Movies = () => {
             const genres = [{ name: 'All Genres', _id: '' }, ...data];
             const { data: movies } = await getMovies();
 
-            setState({
+            setState((state) => ({
                 ...state,
                 movies: movies,
                 genres
-            });
+            }));
         }
 
         loadData();
@@ -141,6 +141,7 @@ export const Movies = () => {
                     />
                 </div>
                 <div className='col'>
+                    {/* //TODO: validar esto usando context para pasar la informacion */}
                     <Link to='/movies/new' className='btn btn-primary'>
                         New movie
                     </Link>

@@ -1,5 +1,6 @@
 import Joi from 'joi-browser';
 import { useForm } from '../hooks/useForm';
+import auth from '../services/authService';
 
 export const LoginForm = () => {
     const schema = {
@@ -7,7 +8,7 @@ export const LoginForm = () => {
         password: Joi.string().required().label('Password')
     };
 
-    const { formState, handleSubmit, renderInput, renderButton } = useForm({
+    const { formState, handleSubmit, renderInput, renderButton, setErrors } = useForm({
         data: {
             username: '',
             password: ''
@@ -17,11 +18,21 @@ export const LoginForm = () => {
     });
 
     const { errors } = formState;
+    const { username, password } = formState.data;
 
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         handleSubmit(e);
         if (Object.keys(errors).length) return;
-        console.log('Submitted');
+        try {
+            await auth.login(username, password);
+            window.location = '/';
+        } catch (err) {
+            if (err.response && err.response.status === 400) {
+                const errors = { ...formState.errors };
+                errors.username = err.response.data;
+                setErrors(errors);
+            }
+        }
     };
 
     return (

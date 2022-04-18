@@ -1,5 +1,5 @@
 import { Input } from '../components/commons/input';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import Joi from 'joi-browser';
 import { Select } from '../components/commons/select';
 
@@ -65,10 +65,17 @@ export const useForm = (initialState) => {
         );
     };
 
-    const setData = (data) => {
-        setFormState({
+    const setData = useCallback((data) => {
+        setFormState((formsState) => ({
             ...formState,
             data
+        }));
+    }, []);
+
+    const setErrors = (errors) => {
+        setFormState({
+            ...formState,
+            errors
         });
     };
 
@@ -100,6 +107,7 @@ export const useForm = (initialState) => {
         renderInput,
         renderSelect,
         setData,
+        setErrors,
         errors
         // handleChange,
         // validate,

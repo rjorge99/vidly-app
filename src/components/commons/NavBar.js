@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
-export const NavBar = () => {
+export const NavBar = ({ user }) => {
+    console.log(user);
     return (
         <nav className='navbar navbar-expand-lg navbar-dark bg-dark'>
             <NavLink className='navbar-brand' to='/movies'>
@@ -39,20 +40,42 @@ export const NavBar = () => {
                             Rentals
                         </NavLink>
                     </li>
-                    <li className='nav-item'>
-                        <NavLink
-                            className={({ isActive }) => `nav-link ${isActive && 'active'}`}
-                            to='/login'>
-                            Login
-                        </NavLink>
-                    </li>
-                    <li className='nav-item'>
-                        <NavLink
-                            className={({ isActive }) => `nav-link ${isActive && 'active'}`}
-                            to='/register'>
-                            Register
-                        </NavLink>
-                    </li>
+                    {!user && (
+                        <>
+                            <li className='nav-item'>
+                                <NavLink
+                                    className={({ isActive }) => `nav-link ${isActive && 'active'}`}
+                                    to='/login'>
+                                    Login
+                                </NavLink>
+                            </li>
+                            <li className='nav-item'>
+                                <NavLink
+                                    className={({ isActive }) => `nav-link ${isActive && 'active'}`}
+                                    to='/register'>
+                                    Register
+                                </NavLink>{' '}
+                            </li>
+                        </>
+                    )}
+                    {user && (
+                        <>
+                            <li className='nav-item'>
+                                <NavLink
+                                    className={({ isActive }) => `nav-link ${isActive && 'active'}`}
+                                    to='/profile'>
+                                    {user.name}
+                                </NavLink>
+                            </li>
+                            <li className='nav-item'>
+                                <NavLink
+                                    className={({ isActive }) => `nav-link ${isActive && 'active'}`}
+                                    to='/logout'>
+                                    Logout
+                                </NavLink>{' '}
+                            </li>
+                        </>
+                    )}
                 </ul>
             </div>
         </nav>
